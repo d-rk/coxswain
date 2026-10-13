@@ -60,13 +60,7 @@ function Account({ forge, host }: { forge: ForgeKind; host: string }) {
         <span className={muted}>Checking {host}…</span>
       ) : user.status === "signed-in" ? (
         <>
-          {/* A private GitLab's avatars need its web session, which coxswain doesn't have. */}
-          <img
-            src={user.avatarUrl}
-            alt=""
-            className="size-10 rounded-full"
-            onError={(e) => (e.currentTarget.style.visibility = "hidden")}
-          />
+          <Avatar url={user.avatarUrl} name={user.name ?? user.login} />
           <div>
             <div className="font-medium">{user.name ?? user.login}</div>
             <div className={muted}>
@@ -83,6 +77,19 @@ function Account({ forge, host }: { forge: ForgeKind; host: string }) {
         </>
       )}
     </Card>
+  );
+}
+
+// A user's picture, or their initial where it won't load: a GitLab that's private serves avatars only to a signed-in
+// browser, not to a token.
+function Avatar({ url, name }: { url: string; name: string }) {
+  const [broken, setBroken] = useState(false);
+  return broken ? (
+    <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-neutral-200 font-medium text-neutral-600 dark:bg-neutral-700 dark:text-neutral-300">
+      {name[0]?.toUpperCase()}
+    </span>
+  ) : (
+    <img src={url} alt="" className="size-10 rounded-full" onError={() => setBroken(true)} />
   );
 }
 
