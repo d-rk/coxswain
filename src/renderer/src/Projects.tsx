@@ -123,7 +123,8 @@ function HostRepos(props: {
     setLoading(false);
     if (result.status !== "ok") return setProblem(result);
     setProblem(null);
-    setRepos((r) => [...r, ...result.repos]);
+    // StrictMode loads the first page twice in development; a repository already listed isn't listed again.
+    setRepos((r) => [...r, ...result.repos.filter((n) => !r.some((o) => o.id === n.id))]);
     setPage(page + 1);
     setHasMore(result.hasMore);
   };
