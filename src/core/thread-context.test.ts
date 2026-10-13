@@ -30,9 +30,10 @@ const entry = (
     section: null,
     quoteAt: null,
     author: null,
-    githubId: null,
-    githubThreadId: null,
-    githubUrl: null,
+    forgeId: null,
+    forgeThreadId: null,
+    forgeUrl: null,
+    forgeConversation: 0,
     ...more,
   }) satisfies Omit<ReviewEntry, "state" | "shown" | "now">;
 

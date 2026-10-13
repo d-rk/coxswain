@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { GitHubProblem, Repo } from "../../core/github";
+import type { ForgeProblem, Repo } from "../../core/forge";
 import type { Project } from "../../core/projects";
 import { Button } from "./components/button";
 import { LockIcon } from "./components/icons";
@@ -25,12 +25,12 @@ export function Projects({ projects, current, start, onSelect, onAdded, onClose 
   const [page, setPage] = useState(0); // last page loaded
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
-  const [problem, setProblem] = useState<GitHubProblem | null>(null);
+  const [problem, setProblem] = useState<ForgeProblem | null>(null);
   const [query, setQuery] = useState("");
 
   const loadMore = async () => {
     setLoading(true);
-    const result = await window.coxswain.listRepos(page + 1);
+    const result = await window.coxswain.listRepos("github", "github.com", page + 1);
     setLoading(false);
     if (result.status !== "ok") return setProblem(result);
     setProblem(null);
@@ -63,7 +63,7 @@ export function Projects({ projects, current, start, onSelect, onAdded, onClose 
   // ponytail: search filters the pages loaded so far; switch to GitHub's search API if people miss old repos.
   const q = query.trim().toLowerCase();
   const shownProjects = projects.filter((p) =>
-    `${p.name} ${p.github ?? ""} ${p.path ?? ""}`.toLowerCase().includes(q),
+    `${p.name} ${p.repo ?? ""} ${p.path ?? ""}`.toLowerCase().includes(q),
   );
   const shownRepos = q
     ? repos.filter(
@@ -122,7 +122,15 @@ export function Projects({ projects, current, start, onSelect, onAdded, onClose 
           <RepoRow
             key={r.id}
             repo={r}
-            onClick={() => void add(window.coxswain.addGitHubProject(r.fullName))}
+            onClick={() =>
+              void add(
+                window.coxswain.addForgeProject({
+                  forge: "github",
+                  host: "github.com",
+                  path: r.fullName,
+                }),
+              )
+            }
           />
         ))}
         {!problem && (

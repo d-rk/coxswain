@@ -4,7 +4,7 @@ Date: 2026-10-13
 
 ## Status
 
-Proposed
+Accepted
 
 ## Context
 
@@ -70,5 +70,4 @@ where GitHub has checks, and a merge method per project rather than per merge. M
 - What GitLab can't do as GitHub does (_Request Changes_ where the version lacks it, a merge method per merge) isn't
   offered on GitLab projects.
 - Fork MRs aren't supported, as fork PRs aren't (ADR 0008).
-- ADRs 0006, 0037 and 0040 describe the GitHub forge; their "github.com only" and "until coxswain knows the host"
-  change with this one.
+- ADRs 0006 and 0037 describe the GitHub forge; 0040's projects have a forge instead of `github`.

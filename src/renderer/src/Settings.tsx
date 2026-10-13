@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import type { CurrentUser } from "../../core/github";
+import type { CurrentUser } from "../../core/forge";
 import type { SummarySettings } from "../../core/jobs";
 import { Button, SegmentedControl } from "./components/button";
 import { TextArea, Input } from "./components/field";
@@ -24,7 +24,7 @@ export function Settings({
   const [user, setUser] = useState<CurrentUser | null>(null);
   const check = () => {
     setUser(null);
-    window.coxswain.currentUser().then(setUser);
+    window.coxswain.currentUser("github", "github.com").then(setUser);
   };
   useEffect(check, []);
 
