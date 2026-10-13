@@ -635,6 +635,7 @@ async function review(db: Db, workspaceId: number, post: ReviewPost): Promise<Po
       );
       if (made.status !== "ok") return made;
       await recorded(db, first.id, made.comment, { threadId: made.threadId });
+      if (review.repliesWait) continue;
       for (const e of rest) {
         const replied = await review.reply(made.threadId, e.body);
         if (replied.status !== "ok") return replied;
@@ -665,6 +666,25 @@ async function review(db: Db, workspaceId: number, post: ReviewPost): Promise<Po
           .where("forge_thread_id", "is not", null)
           .execute();
     }
+    // The replies that waited for their thread to be published, as replies to it now.
+    if (review.repliesWait)
+      for (const t of saying("lines")) {
+        const [first, ...rest] = commentsOf(t);
+        const root = await db
+          .selectFrom("entries")
+          .select(["forge_id", "forge_thread_id"])
+          .where("id", "=", first.id)
+          .executeTakeFirstOrThrow();
+        for (const e of rest) {
+          const replied = await forge.postReply(
+            pr,
+            { id: root.forge_thread_id ?? "", first: root.forge_id! },
+            e.body,
+          );
+          if (replied.status !== "ok") return replied;
+          await recorded(db, e.id, replied.comment);
+        }
+      }
   }
   for (const t of listed) {
     if (t.resolve === null) continue;

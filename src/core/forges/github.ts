@@ -701,6 +701,7 @@ export const githubForge: Forge = {
     return {
       status: "ok",
       review: {
+        repliesWait: false,
         thread: async (a, body) => {
           const side = sideOf(a.side);
           const made = await graphql<{

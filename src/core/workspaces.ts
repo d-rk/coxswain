@@ -87,7 +87,7 @@ export function branchNameProblem(name: string): string | null {
   return null;
 }
 
-// Adds a workspace on a branch, new or already on GitHub, and makes it the current one. Its worktree branches off
+// Adds a workspace on a branch, new or already on its forge, and makes it the current one. Its worktree branches off
 // baseBranch when it's opened, unless the branch exists (git.ts openWorktree).
 export async function openBranchWorkspace(
   db: Db,

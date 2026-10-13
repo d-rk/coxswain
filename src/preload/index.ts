@@ -69,7 +69,10 @@ export type Changed =
 
 // The one interface between the UI and the core (ADR 0002).
 const api = {
-  // ADR 0041: the user signed in to a forge's host, and the repositories they can see there, page by page.
+  // ADR 0041: the hosts coxswain can reach a forge on (github.com, and each GitLab glab is signed in to), the user
+  // signed in to one, and the repositories they can see there, page by page.
+  listForgeHosts: (): Promise<{ forge: ForgeKind; host: string }[]> =>
+    ipcRenderer.invoke("forge:hosts"),
   currentUser: (forge: ForgeKind, host: string): Promise<CurrentUser> =>
     ipcRenderer.invoke("forge:current-user", forge, host),
   listRepos: (forge: ForgeKind, host: string, page: number): Promise<RepoPage> =>

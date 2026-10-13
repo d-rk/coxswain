@@ -92,6 +92,7 @@ import {
 } from "../core/views";
 import {
   type Check,
+  forgeHosts,
   forgeOf,
   type ForgeKind,
   type ForgeRepo,
@@ -421,6 +422,7 @@ app.whenReady().then(() => {
     });
     return picked.canceled || !picked.filePath ? null : createRepository(db, picked.filePath);
   });
+  ipcMain.handle("forge:hosts", () => forgeHosts());
   ipcMain.handle("forge:current-user", (_, forge: ForgeKind, host: string) =>
     forgeOf(forge).currentUser(host),
   );

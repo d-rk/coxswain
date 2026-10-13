@@ -1,4 +1,5 @@
 import { githubForge } from "./forges/github.ts";
+import { gitlabForge, gitlabHostOf, gitlabHosts } from "./forges/gitlab.ts";
 
 // ADR 0041: a forge is where a project's PRs are. Everything outside core/forges/ talks to a Forge, never to GitHub or
 // GitLab themselves.
@@ -137,8 +138,10 @@ export type Verdict = "COMMENT" | "APPROVE" | "REQUEST_CHANGES";
 export type CommentRef = { id: string; inConversation: boolean };
 // A comment recorded under an id the forge replaced when the review was submitted, and what it is now.
 export type Rebound = { was: string; comment: Posted; threadId: string | null };
-// A review in progress: comments added to it go out together when it's submitted.
+// A review in progress: comments added to it go out together when it's submitted. repliesWait: a thread started in it
+// takes no replies until it's submitted (GitLab's draft notes), so they're posted after.
 export type Review = {
+  repliesWait: boolean;
   thread(
     anchor: LineAnchor,
     body: string,
@@ -202,10 +205,13 @@ export type Forge = {
   changePullRequest(pr: Pr, ref: PullRequestRef, change: PullRequestChange): Promise<ForgeResult>;
 };
 
-export function forgeOf(kind: ForgeKind): Forge {
-  if (kind === "github") return githubForge;
-  throw new Error("GitLab isn't supported yet");
-}
+export const forgeOf = (kind: ForgeKind): Forge => (kind === "github" ? githubForge : gitlabForge);
+
+// Every host coxswain can reach a forge on: github.com, and each GitLab host glab is signed in to.
+export const forgeHosts = (): { forge: ForgeKind; host: string }[] => [
+  { forge: "github", host: "github.com" },
+  ...gitlabHosts().map((host) => ({ forge: "gitlab" as const, host })),
+];
 
 // What to tell the user when a change can't be made on the forge, as an error's message.
 export const problemText = (p: ForgeProblem) =>
@@ -225,5 +231,8 @@ export async function forgeRepoOf(url: string): Promise<ForgeRepo | null> {
   const path = m[3];
   if (host === "github.com")
     return /^[\w.-]+\/[\w.-]+$/.test(path) ? { forge: "github", host, path } : null;
-  return null;
+  const gitlab = gitlabHostOf(host);
+  return gitlab && /^[\w.-]+(\/[\w.-]+)+$/.test(path)
+    ? { forge: "gitlab", host: gitlab, path }
+    : null;
 }

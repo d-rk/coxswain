@@ -42,7 +42,9 @@ where GitHub has checks, and a merge method per project rather than per merge. M
    approvals, its head pipeline's jobs).
 5. **How ADR 0037 maps onto GitLab:** a review thread is a resolvable discussion whose first note has a diff position;
    the conversation is the MR's other notes; _Submit Review_ is draft notes published together
-   (`draft_notes/bulk_publish`), with _Approve_ as an approval; _Post to GitHub_ is a note posted at once; checks are
+   (`draft_notes/bulk_publish`), with _Request Changes_ as its reviewer state and _Approve_ as an approval; a draft
+   note is recorded as `draft:<id>` until then and found again once published, and replies to a thread started in the
+   review are posted after it; _Post to GitHub_ is a note posted at once; checks are
    the head pipeline's jobs, a commit's dot its pipeline's state, and a failed job's log its trace; ready is clearing
    draft. A comment off the MR's diff goes into the conversation with the code quoted, as GitLab doesn't render a
    permalink as code.
@@ -67,7 +69,7 @@ where GitHub has checks, and a merge method per project rather than per merge. M
 
 - GitLab features need `glab` installed and signed in to the host.
 - GitLab Free has one assignee and one reviewer per MR and no approval rules; the PR panel shows what the forge returns.
-- What GitLab can't do as GitHub does (_Request Changes_ where the version lacks it, a merge method per merge) isn't
-  offered on GitLab projects.
+- What GitLab can't do as GitHub does (a merge method per merge) isn't offered on GitLab projects: the panel offers
+  the project's method, and squashing where the project allows it.
 - Fork MRs aren't supported, as fork PRs aren't (ADR 0008).
 - ADRs 0006 and 0037 describe the GitHub forge; 0040's projects have a forge instead of `github`.

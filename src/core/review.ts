@@ -324,7 +324,7 @@ function reviewPrompt(
     return `${i + 1}. On ${describe(root)}${changed}\n${lines.join("\n")}`;
   });
   const prompt = `Here's my review of this worktree's changes so far: every thread, with where it points and the code as it was
-then, in order. "Me" is me, "@name" a reviewer on GitHub. Work through them: make the changes the comments ask for,
+then, in order. "Me" is me, "@name" a reviewer on the PR. Work through them: make the changes the comments ask for,
 answer what's still open, and tell me briefly what you did for each and what you left.\n\n${parts.join("\n\n")}`;
   return { threads: roots.length, prompt };
 }
